@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres
+    container_name: back_db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./tmp/data_db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  app:
+    image: node
+    container_name: app
+    restart: on-failure
+    working_dir: /api
+    volumes:
+      - ./:/api
+    depends_on:
+      - db
+    ports:
+      - "3004:3004"
+    command: npm run start src/app.js
